@@ -158,6 +158,20 @@ app.delete('/my-sessions/:id', verifyToken, async (req, res) => {
   }
 });
 
+// Get a single session by ID
+app.get('/my-sessions/:id', verifyToken, async (req, res) => {
+  try {
+    const session = await Session.findOne({ _id: req.params.id, userId: req.userId });
+    if (!session) {
+      return res.status(404).json({ message: 'Session not found or unauthorized' });
+    }
+    res.json(session);
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching session' });
+  }
+});
+
+
 app.put('/my-sessions/:id', verifyToken, async (req, res) => {
   const { id } = req.params;
   const { title, description, duration, date, mentor, status } = req.body;
